@@ -15,6 +15,9 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title     
+
+    def approved_comments(self):
+        return self.comments.filter(approved_comment=True)
 # Create your models here.
 
 class Comment(models.Model):
