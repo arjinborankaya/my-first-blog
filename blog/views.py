@@ -22,35 +22,41 @@ class post_detail(View):
         return render(request, 'blog/post_detail.html', {'post': post})
 
 
-@login_required
-def post_new(request):
-    if request.method == "POST":
+class post_new(LoginRequiredMixin,View):
+ def get(self, request):
+        form = PostForm()
+        return render(request, 'blog/post_edit.html', {'form': form})
+ def post(self, request):
         form = PostForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
             post.save()
             return redirect('post_detail', pk=post.pk)
-    else:
-        form = PostForm()
-    return render(request, 'blog/post_edit.html', {'form': form})
+        else:
+         form = PostForm()
+        
 
-@login_required
-def post_edit(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    if request.method == "POST":
-        form = PostForm(request.POST, instance=post)
+class post_edit(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        form = PostForm(instance=post)
+        return render(request, 'blog/post_edit.html', {'form': form})
+        
+        
+    def post(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        form = PostForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
             post.save()
             return redirect('post_detail', pk=post.pk)
-    else:
-        form = PostForm(instance=post)
-    return render(request, 'blog/post_edit.html', {'form': form})
+        else:
+         form = PostForm()
 
-@login_required
-def post_draft_list(request):
+class post_draft_list(LoginRequiredMixin,View):
+ def get(self, request):
     posts = Post.objects.filter(published_date__isnull=True).order_by('created_date')
     return render(request, 'blog/post_draft_list.html', {'posts': posts})
 
@@ -91,14 +97,14 @@ class add_comment_to_post(View):
             form = CommentForm()
 
 
-@login_required
-def comment_approve(request, pk):
+class comment_approve(LoginRequiredMixin, View):
+ def get(self, request, pk):
     comment = get_object_or_404(Comment, pk=pk)
     comment.approve()
     return redirect('post_detail', pk=comment.post.pk)
 
-@login_required
-def comment_remove(request, pk):
+class comment_remove(LoginRequiredMixin, View):
+ def get(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
     comment.delete()
     return redirect('post_detail', pk=comment.post.pk)
