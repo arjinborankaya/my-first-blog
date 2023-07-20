@@ -41,7 +41,7 @@ class PostEdit(LoginRequiredMixin, View):
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
         form = PostForm(instance=post)
-        return render(request, 'blog/post_edit.html', {'form': form})
+        return render(request, 'blog/edit_post.html', {'form': form})
         
         
     def post(self, request, pk):
