@@ -10,19 +10,19 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 
-class postList(View):
+class PostList(View):
     def get(self, request):
         posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
         return render(request, 'blog/post_list.html',{'posts': posts})
 
 
-class postDetail(View):
+class PostDetail(View):
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
         return render(request, 'blog/post_detail.html', {'post': post})
 
 
-class postNew(LoginRequiredMixin,View):
+class PostNew(LoginRequiredMixin,View):
  def get(self, request):
         form = PostForm()
         return render(request, 'blog/post_edit.html', {'form': form})
@@ -37,7 +37,7 @@ class postNew(LoginRequiredMixin,View):
          form = PostForm()
         
 
-class postEdit(LoginRequiredMixin, View):
+class PostEdit(LoginRequiredMixin, View):
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
         form = PostForm(instance=post)
@@ -55,12 +55,12 @@ class postEdit(LoginRequiredMixin, View):
         else:
          form = PostForm()
 
-class postDraftList(LoginRequiredMixin,View):
+class PostDraftList(LoginRequiredMixin,View):
  def get(self, request):
     posts = Post.objects.filter(published_date__isnull=True).order_by('created_date')
     return render(request, 'blog/post_draft_list.html', {'posts': posts})
 
-class postPublish(LoginRequiredMixin, View):
+class PostPublish(LoginRequiredMixin, View):
  def get(self, request, pk):
     post = get_object_or_404(Post, pk=pk)
     post.publish()
@@ -71,13 +71,13 @@ def publish(self):
     self.published_date = timezone.now()
     self.save()
 
-class postRemove(LoginRequiredMixin, View):
+class PostRemove(LoginRequiredMixin, View):
  def get(self, request, pk):
     post = get_object_or_404(Post, pk=pk)
     post.delete()
     return redirect('post_list')
     
-class addCommentToPost(View):
+class AddCommentToPost(View):
     
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
@@ -97,13 +97,13 @@ class addCommentToPost(View):
             form = CommentForm()
 
 
-class commentApprove(LoginRequiredMixin, View):
+class CommentApprove(LoginRequiredMixin, View):
  def get(self, request, pk):
     comment = get_object_or_404(Comment, pk=pk)
     comment.approve()
     return redirect('post_detail', pk=comment.post.pk)
 
-class commentRemove(LoginRequiredMixin, View):
+class CommentRemove(LoginRequiredMixin, View):
  def get(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
     comment.delete()
