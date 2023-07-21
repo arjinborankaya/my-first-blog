@@ -23,10 +23,10 @@ class PostDetail(View):
 
 
 class PostNew(LoginRequiredMixin,View):
- def get(self, request):
+    def get(self, request):
         form = PostForm()
         return render(request, 'blog/post_edit.html', {'form': form})
- def post(self, request):
+    def post(self, request):
         form = PostForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
@@ -34,7 +34,7 @@ class PostNew(LoginRequiredMixin,View):
             post.save()
             return redirect('post_detail', pk=post.pk)
         else:
-         form = PostForm()
+            form = PostForm()
         
 
 class PostEdit(LoginRequiredMixin, View):
@@ -53,18 +53,18 @@ class PostEdit(LoginRequiredMixin, View):
             post.save()
             return redirect('post_detail', pk=post.pk)
         else:
-         form = PostForm()
+            form = PostForm()
 
 class PostDraftList(LoginRequiredMixin,View):
- def get(self, request):
-    posts = Post.objects.filter(published_date__isnull=True).order_by('created_date')
-    return render(request, 'blog/post_draft_list.html', {'posts': posts})
+    def get(self, request):
+        posts = Post.objects.filter(published_date__isnull=True).order_by('created_date')
+        return render(request, 'blog/post_draft_list.html', {'posts': posts})
 
 class PostPublish(LoginRequiredMixin, View):
- def get(self, request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    post.publish()
-    return redirect('post_detail', pk=pk)
+    def get(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        post.publish()
+        return redirect('post_detail', pk=pk)
 
 
 def publish(self):
@@ -72,10 +72,10 @@ def publish(self):
     self.save()
 
 class PostRemove(LoginRequiredMixin, View):
- def get(self, request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    post.delete()
-    return redirect('post_list')
+    def get(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        post.delete()
+        return redirect('post_list')
     
 class AddCommentToPost(View):
     
@@ -98,13 +98,13 @@ class AddCommentToPost(View):
 
 
 class CommentApprove(LoginRequiredMixin, View):
- def get(self, request, pk):
-    comment = get_object_or_404(Comment, pk=pk)
-    comment.approve()
-    return redirect('post_detail', pk=comment.post.pk)
+    def get(self, request, pk):
+        comment = get_object_or_404(Comment, pk=pk)
+        comment.approve()
+        return redirect('post_detail', pk=comment.post.pk)
 
 class CommentRemove(LoginRequiredMixin, View):
- def get(request, pk):
-    comment = get_object_or_404(Comment, pk=pk)
-    comment.delete()
-    return redirect('post_detail', pk=comment.post.pk)
+    def get(request, pk):
+        comment = get_object_or_404(Comment, pk=pk)
+        comment.delete()
+        return redirect('post_detail', pk=comment.post.pk)
